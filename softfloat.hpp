@@ -137,10 +137,17 @@ public:
 	}
 
 	/** @brief Construct from integer */
-//	__HOST_DEVICE__ explicit softfloat(const uint32_t);
-//	__HOST_DEVICE__ explicit softfloat(const uint64_t);
-//	__HOST_DEVICE__ explicit softfloat(const int32_t);
-//	__HOST_DEVICE__ explicit softfloat(const int64_t);
+#ifndef CUDA
+	__HOST_DEVICE__ explicit softfloat(const uint32_t);
+	__HOST_DEVICE__ explicit softfloat(const uint64_t);
+	__HOST_DEVICE__ explicit softfloat(const int32_t);
+	__HOST_DEVICE__ explicit softfloat(const int64_t);
+	__HOST_DEVICE__ explicit softfloat(const float a) {
+		Cv32suf s;
+		s.f = a;
+		v = s.u;
+	}
+#else
 	__HOST_DEVICE__ static softfloat fromUInt32(uint32_t);
 	__HOST_DEVICE__ static softfloat fromUInt64(uint64_t);
 	__HOST_DEVICE__ static softfloat fromInt32(int32_t);
@@ -152,6 +159,7 @@ public:
 		r.v = s.u;
 		return r;
 	}
+#endif
 
 #ifdef CV_INT32_T_IS_LONG_INT
     // for platforms with int32_t = long int
@@ -350,10 +358,19 @@ public:
 	}
 
 	/** @brief Construct from integer */
-//	__HOST_DEVICE__ explicit softdouble(const uint32_t);
-//	__HOST_DEVICE__ explicit softdouble(const uint64_t);
-//	__HOST_DEVICE__ explicit softdouble(const int32_t);
-//	__HOST_DEVICE__ explicit softdouble(const int64_t);
+#ifndef CUDA
+	__HOST_DEVICE__ explicit softdouble(const uint32_t);
+	__HOST_DEVICE__ explicit softdouble(const uint64_t);
+	__HOST_DEVICE__ explicit softdouble(const int32_t);
+	__HOST_DEVICE__ explicit softdouble(const int64_t);
+
+	/** @brief Construct from double */
+	__HOST_DEVICE__ explicit softdouble(const double a) {
+		Cv64suf s;
+		s.f = a;
+		v = s.u;
+	}
+#else
 	__HOST_DEVICE__ static softdouble fromUInt32(uint32_t);
 	__HOST_DEVICE__ static softdouble fromUInt64(uint64_t);
 	__HOST_DEVICE__ static softdouble fromInt32(int32_t);
@@ -364,12 +381,6 @@ public:
 	explicit softdouble( const int a ) {*this = softdouble(static_cast<int32_t>(a));}
 #endif
 
-	/** @brief Construct from double */
-//	__HOST_DEVICE__ explicit softdouble(const double a) {
-//		Cv64suf s;
-//		s.f = a;
-//		v = s.u;
-//	}
 	__HOST_DEVICE__ static softdouble fromDouble(double a) {
 		softdouble r;
 		Cv64suf s;
@@ -377,6 +388,7 @@ public:
 		r.v = s.u;
 		return r;
 	}
+#endif
 
 	/** @brief Type casts  */
 	__HOST_DEVICE__ operator softfloat() const;
